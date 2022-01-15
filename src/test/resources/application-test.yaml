@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        id:
+          new_generator_mappings: false
+  datasource:
+    driverClassName: org.h2.Driver
+    userName: sa
+    password: sa
+    databaseurl: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;Mode=MySQL;
+    initialization-mode: always
