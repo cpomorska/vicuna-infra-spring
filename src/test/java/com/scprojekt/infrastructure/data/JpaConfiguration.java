@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EntityScan(basePackages = "com.scprojekt.domain.entities")
+@EntityScan(basePackages = "com.scprojekt.domain.model")
 @EnableJpaRepositories(basePackages = "com.scprojekt.infrastructure.repositories")
 @EnableTransactionManagement
 @ActiveProfiles("test")

@@ -1,34 +1,37 @@
 package com.scprojekt.infrastructure.repositories;
 
-import com.scprojekt.domain.entities.User;
-import com.scprojekt.domain.entities.UserType;
+import com.scprojekt.domain.model.user.User;
+import com.scprojekt.domain.model.user.UserNumber;
+import com.scprojekt.domain.model.user.UserType;
 import com.scprojekt.infrastructure.data.JpaConfiguration;
 import com.scprojekt.infrastructure.main.Application;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, JpaConfiguration.class})
 @TestPropertySource(locations = "classpath:application-test.yaml")
 @ActiveProfiles("test")
 @Transactional
-public class InfrastructureUserRepositoryTest {
+class InfrastructureUserRepositoryTest {
 
     @PersistenceContext
     protected EntityManager em;
@@ -36,15 +39,14 @@ public class InfrastructureUserRepositoryTest {
     @Autowired
     private InfrastructureUserRepository infrastructureUserRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         User user = createTestUser();
         infrastructureUserRepository.createEntity(user);
     }
 
-
     @Test
-    public void findAll() {
+    void findAll() {
         List<User> result = infrastructureUserRepository.findAll();
         assertNotNull(result);
         assertEquals("Testuser",result.get(0).getUserName());
@@ -52,17 +54,17 @@ public class InfrastructureUserRepositoryTest {
     }
 
     @Test
-    public void createUser() {
+    void createUser() {
         UUID uuid1 = UUID.fromString("35fa10da-594a-4601-a7b7-0a707a3c1ce7");
         User user1 = createTestUser();
         user1.setUserName("Insertuser");
-        user1.setUserNumber(uuid1);
+        user1.setUserNumber(new UserNumber(uuid1));
         infrastructureUserRepository.createEntity(user1);
 
         List<User> result = infrastructureUserRepository.findAll();
         assertNotNull(result);
         assertEquals(2,result.size());
-        assertEquals(uuid1, result.get(1).getUserNumber());
+        assertEquals(uuid1, result.get(1).getUserNumber().getUuid());
         assertEquals("Insertuser",result.get(1).getUserName());
     }
 
@@ -77,7 +79,7 @@ public class InfrastructureUserRepositoryTest {
         userTypeList.add(userType);
 
         user.setUserName("Testuser");
-        user.setUserNumber(UUID.fromString("586c2084-d545-4fac-b7d3-2319382df14f"));
+        user.setUserNumber(new UserNumber(UUID.fromString("586c2084-d545-4fac-b7d3-2319382df14f")));
         user.setUserType(userTypeList);
 
         return user;
